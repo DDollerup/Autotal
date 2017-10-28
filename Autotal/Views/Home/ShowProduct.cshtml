@@ -1,0 +1,58 @@
+﻿@model ProductVM
+@{
+    ViewBag.Title = "ShowProduct";
+}
+
+<h3>
+    @Model.Brand.Name @Model.Product.Model
+</h3>
+
+<div class="row">
+    <div class="col-md-12">
+        <div>
+            <img src="~/Content/Images/Products/@Model.GetFirstImage().ImageURL" alt="@Model.GetFirstImage().Alt" class="img-responsive" />
+        </div>
+    </div>
+    @foreach (Image img in Model.Images)
+    {
+        <div class="col-md-4">
+            <div>
+                <img src="~/Content/Images/Products/@img.ImageURL" alt="@img.Alt" class="img-responsive" />
+            </div>
+        </div>
+    }
+    <div class="col-md-6">
+        <h6>
+            @Model.Product.Year @Model.Brand.Name @Model.Product.Model
+        </h6>
+        @Html.Raw(Model.Product.Description)
+    </div>
+    <div class="col-md-6">
+        <p>
+            @((Model.Product.Inspected == true ? "Nysynet" : "Ikke Synet"))
+            <br />
+            @((Model.Product.Smoker == true ? "Der har været røget i bilen" : "Der har ikke været røget i bilen"))
+        </p>
+        <ul>
+            <li>
+                @Model.Color.Name
+            </li>
+            <li>
+                @Model.Product.BHP HK
+            </li>
+            <li>
+                @Model.Product.Km KM
+            </li>
+            <li>
+                @Model.Product.Price KR
+            </li>
+            <li>
+                Set @Model.Product.Views Gangnamstyle
+            </li>
+            <li>
+                <a href="@Request.UrlReferrer.PathAndQuery">Tilbage</a>
+            </li>
+        </ul>
+    </div>
+</div>
+

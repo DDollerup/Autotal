@@ -1,0 +1,17 @@
+﻿@model Subpage
+@{
+    ViewBag.Title = "Index";
+}
+
+<h1>@Model.Title</h1>
+@Html.Raw(Model.Content)
+<div class="row">
+@foreach (Image image in ViewBag.RandomPictures)
+{
+    <div class="col-md-4">
+        <a href="#">
+            <img class="img-responsive" src="~/Content/Images/Products/@image.ImageURL" alt="@image.Alt" />
+        </a>
+    </div>
+}
+</div>

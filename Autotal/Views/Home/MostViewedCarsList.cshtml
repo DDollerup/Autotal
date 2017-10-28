@@ -1,0 +1,20 @@
+﻿@model List<ProductVM>
+
+<div class="row">
+    @foreach (ProductVM item in Model)
+    {
+        <div class="col-md-12">
+            <div>
+                <div>
+                    <span>@item.Product.Model (@item.Product.Views visninger)</span>
+                </div>
+                <div>
+                    <img src="~/Content/Images/Products/@item.GetFirstImage().ImageURL" alt="@item.GetFirstImage().Alt" class="img-responsive"  />
+                    <span>
+                        @item.Product.Price
+                    </span>
+                </div>
+            </div>
+        </div>
+    }
+</div>

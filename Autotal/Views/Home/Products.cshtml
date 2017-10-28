@@ -1,0 +1,29 @@
+﻿@model List<ProductVM>
+@{
+
+}
+
+<h3>
+    @ViewBag.Title
+</h3>
+
+<div class="row">
+    @foreach (ProductVM pvm in Model)
+    {
+        <a href="/Home/ShowProduct/@pvm.Product.ID">
+            <div class="productListItem">
+                <div>
+                    <img src="~/Content/Images/Products/@pvm.GetFirstImage().ImageURL" alt="@pvm.GetFirstImage().Alt" class="img-responsive" />
+                </div><div>
+                    <h3>
+                        @pvm.Product.Model
+                    </h3>
+                    <span>@pvm.Product.BHP HK -</span>
+                    <span> @pvm.Product.Km</span>
+                </div><div>
+                    <span>@pvm.Product.Price,-</span>
+                </div>
+            </div>
+        </a>
+    }
+</div>

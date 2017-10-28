@@ -1,0 +1,57 @@
+﻿@model Contact
+
+<div class="row">
+    <div class="footerColumn">
+        <div>
+            <h5>Sitemap</h5>
+            <hr />
+            <ul>
+                <li>
+                    <a href="/Home/Index">Forside</a>
+                </li>
+                <li>
+                    <a href="/Home/Index">Betingelser</a>
+                </li>
+                <li>
+                    <a href="/Home/Index">Om Os</a>
+                </li>
+                <li>
+                    <a href="/Home/Index">Kontakt</a>
+                </li>
+                <li>
+                    <a href="/Home/Index">Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="footerColumn">
+        <div>
+            <h5>Autotal</h5>
+            <hr />
+            @(Html.Raw(Model.Address.Replace("\n", "<br />")))
+        </div>
+    </div>
+    <div class="footerColumn">
+        <div>
+            <h5>Åbningstider</h5>
+            <hr />
+            @(Html.Raw(Model.OpenHours.Replace("\n","<br />")))
+        </div>
+    </div>
+    <div class="footerColumn">
+        <div>
+            <h5>Find Os</h5>
+            <hr />
+            @Html.Raw(Model.GoogleMapsEmbed)
+        </div>
+    </div>
+    <div class="footerColumn">
+        <div>
+            <h5>Totallån</h5>
+            <hr />
+            <span>
+                @Model.InterestRate %
+            </span>
+        </div>
+    </div>
+</div>

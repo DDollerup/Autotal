@@ -1,0 +1,19 @@
+﻿@model List<BrandVM>
+
+<div class="row">
+    <div id="usedCars">
+        <div>
+            <h3>Brugte Biler (@ViewBag.TotalProductCount)</h3>
+        </div>
+        <div>
+            <ul>
+                @foreach (BrandVM vm in Model)
+                {
+                    <li>
+                        <a href="/Home/SortByBrand/@vm.Brand.ID">@vm.Brand.Name (@vm.ProductCount)</a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
