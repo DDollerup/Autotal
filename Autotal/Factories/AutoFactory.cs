@@ -18,6 +18,7 @@ using System.Web;
 using System.Data.SqlClient;
 using System.Configuration;
 using System.Reflection;
+using System.Dynamic;
 
 public class AutoFactory<T>
 {
@@ -808,5 +809,77 @@ public class AutoFactory<T>
 
         // returning result
         return result;
+    }
+
+    /// <summary>
+    /// Creates a VM between this Entity and select others.
+    /// </summary>
+    /// <typeparam name="Q">Other Entity</typeparam>
+    /// <param name="id">ID for this Entity</param>
+    /// <param name="qid">ID for QEntity</param>
+    /// <returns>A dynamic object that contains a reference to this Entity and QEntity</returns>
+    public dynamic GetEntityVM<Q>(int id, int qid)
+    {
+        dynamic vm = new ExpandoObject();
+        ((IDictionary<string, object>)vm)[typeof(T).Name] = Get(id);
+        ((IDictionary<string, object>)vm)[typeof(Q).Name] = new AutoFactory<Q>().Get(qid);
+        return vm;
+    }
+
+    /// <summary>
+    /// Creates a VM between this Entity and select others.
+    /// </summary>
+    /// <typeparam name="Q">Other Entity</typeparam>
+    /// <param name="id">ID for this Entity</param>
+    /// <param name="qid">ID for QEntity</param>
+    /// <param name="pid">ID for PEntity</param>
+    /// <returns>A dynamic object that contains a reference to this Entity, QEntity and PEntity</returns>
+    public dynamic GetEntityVM<Q, P>(int id, int qid, int pid)
+    {
+        dynamic vm = new ExpandoObject();
+        ((IDictionary<string, object>)vm)[typeof(T).Name] = Get(id);
+        ((IDictionary<string, object>)vm)[typeof(Q).Name] = new AutoFactory<Q>().Get(qid);
+        ((IDictionary<string, object>)vm)[typeof(P).Name] = new AutoFactory<P>().Get(pid);
+        return vm;
+    }
+
+    /// <summary>
+    /// Creates a VM between this Entity and select others.
+    /// </summary>
+    /// <typeparam name="Q">Other Entity</typeparam>
+    /// <param name="id">ID for this Entity</param>
+    /// <param name="qid">ID for QEntity</param>
+    /// <param name="pid">ID for PEntity</param>
+    /// <param name="oid">ID for OEntity</param>
+    /// <returns>A dynamic object that contains a reference to this Entity, QEntity, PEntity and OEntity</returns>
+    public dynamic GetEntityVM<Q, P, O>(int id, int qid, int pid, int oid)
+    {
+        dynamic vm = new ExpandoObject();
+        ((IDictionary<string, object>)vm)[typeof(T).Name] = Get(id);
+        ((IDictionary<string, object>)vm)[typeof(Q).Name] = new AutoFactory<Q>().Get(qid);
+        ((IDictionary<string, object>)vm)[typeof(P).Name] = new AutoFactory<P>().Get(pid);
+        ((IDictionary<string, object>)vm)[typeof(O).Name] = new AutoFactory<O>().Get(oid);
+        return vm;
+    }
+
+    /// <summary>
+    /// Creates a VM between this Entity and select others.
+    /// </summary>
+    /// <typeparam name="Q">Other Entity</typeparam>
+    /// <param name="id">ID for this Entity</param>
+    /// <param name="qid">ID for QEntity</param>
+    /// <param name="pid">ID for PEntity</param>
+    /// <param name="oid">ID for OEntity</param>
+    /// <param name="uid">ID for UEntity</param>
+    /// <returns>A dynamic object that contains a reference to this Entity, QEntity, PEntity, OEntity and UEntity</returns>
+    public dynamic GetEntityVM<Q, P, O, U>(int id, int qid, int pid, int oid, int uid)
+    {
+        dynamic vm = new ExpandoObject();
+        ((IDictionary<string, object>)vm)[typeof(T).Name] = Get(id);
+        ((IDictionary<string, object>)vm)[typeof(Q).Name] = new AutoFactory<Q>().Get(qid);
+        ((IDictionary<string, object>)vm)[typeof(P).Name] = new AutoFactory<P>().Get(pid);
+        ((IDictionary<string, object>)vm)[typeof(O).Name] = new AutoFactory<O>().Get(oid);
+        ((IDictionary<string, object>)vm)[typeof(U).Name] = new AutoFactory<U>().Get(uid);
+        return vm;
     }
 }

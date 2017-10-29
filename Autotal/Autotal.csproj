@@ -154,6 +154,7 @@
     <Content Include="Views\Home\SortCars.cshtml" />
     <Content Include="Views\Home\ShowProduct.cshtml" />
     <Content Include="Views\Home\Footer.cshtml" />
+    <Content Include="Views\Home\Test.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

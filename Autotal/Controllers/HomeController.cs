@@ -16,6 +16,7 @@ namespace Autotal.Controllers
         {
             ViewBag.RandomPictures = context.ImageFactory.TakeRandom(3);
             context.ProductFactory.CountBy("BrandID", 1);
+
             return View(context.SubpageFactory.Get(1));
         }
 
@@ -84,6 +85,12 @@ namespace Autotal.Controllers
             pvm.Images = context.ImageFactory.GetAllBy("ProductID", productToCreateFrom.ID);
 
             return pvm;
+        }
+
+        public ActionResult Test()
+        {
+            Product p = context.ProductFactory.Get(1);
+            return View(context.ProductFactory.GetEntityVM<Brand>(p.ID, p.BrandID));
         }
 
 
