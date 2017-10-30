@@ -7,7 +7,7 @@
  - You are free to use this as you please   -
  - as long as you credit Proper Dog ApS     -
  -                                          -
- - Latest Update: 28-10-2017                -
+ - Latest Update: 30-10-2017                -
  --------------------------------------------
  */
 
@@ -405,15 +405,15 @@ public class AutoFactory<T>
     /// <summary>
     /// Gets all elements from table that matches requirements.
     /// </summary>
-    /// <typeparam name="Q">Table to join</typeparam>
+    /// <typeparam name="T1">Table to join</typeparam>
     /// <param name="value">The search parameter</param>
     /// <param name="fields">The fields in the table you wish to include</param>
     /// <returns>List of elements from table that matches the value and fields</returns>
-    public List<T> SearchByJoin<Q>(object value, params string[] fields)
+    public List<T> SearchByJoin<T1>(object value, params string[] fields)
     {
         // Creating the SELECT SQL Statement, with {0} as Table name
         string sqlQuery = string.Format("SELECT [{0}].* FROM [{0}] ", typeof(T).Name);
-        sqlQuery += string.Format("INNER JOIN [{0}] ON [{1}].{0}ID = [{0}].ID", typeof(Q).Name, typeof(T).Name);
+        sqlQuery += string.Format("INNER JOIN [{0}] ON [{1}].{0}ID = [{0}].ID", typeof(T1).Name, typeof(T).Name);
 
         sqlQuery += " WHERE ";
 
@@ -424,19 +424,21 @@ public class AutoFactory<T>
             sqlQuery += " OR ";
         }
 
-        List<PropertyInfo> propertiesFromJoin = new List<PropertyInfo>(GetGenericType<Q>().GetType().GetProperties());
+        #region QEntity
+        List<PropertyInfo> propertiesFromJoin = new List<PropertyInfo>(GetGenericType<T1>().GetType().GetProperties());
 
         for (int i = 0; i < propertiesFromJoin.Count; i++)
         {
             PropertyInfo property = propertiesFromJoin[i];
             if (property.Name.ToLower().Contains("id") && i == 0) continue;
-            sqlQuery += string.Format("[{0}].{1} LIKE '%" + value + "%'", typeof(Q).Name, property.Name);
+            sqlQuery += string.Format("[{0}].{1} LIKE '%" + value + "%'", typeof(T1).Name, property.Name);
 
             if (i + 1 < propertiesFromJoin.Count)
             {
                 sqlQuery += " OR ";
             }
-        }
+        } 
+        #endregion
 
         // We open a connection with the current connectionstring
         SqlConnection connection = new SqlConnection(connectionString);
@@ -487,17 +489,17 @@ public class AutoFactory<T>
     /// <summary>
     /// Gets all elements from table that matches requirements.
     /// </summary>
-    /// <typeparam name="Q">Table to join</typeparam>
-    /// <typeparam name="P">Other tabl to join</typeparam>
+    /// <typeparam name="T1">First table to join</typeparam>
+    /// <typeparam name="T2">Second table to join</typeparam>
     /// <param name="value">The search parameter</param>
     /// <param name="fields">The fields in the table you wish to include</param>
     /// <returns>List of elements from table that matches the value and fields</returns>
-    public List<T> SearchByJoin<Q, P>(object value, params string[] fields)
+    public List<T> SearchByJoin<T1, T2>(object value, params string[] fields)
     {
         // Creating the SELECT SQL Statement, with {0} as Table name
         string sqlQuery = string.Format("SELECT [{0}].* FROM [{0}] ", typeof(T).Name);
-        sqlQuery += string.Format("INNER JOIN [{0}] ON [{1}].{0}ID = [{0}].ID ", typeof(Q).Name, typeof(T).Name);
-        sqlQuery += string.Format("INNER JOIN [{0}] ON [{1}].{0}ID = [{0}].ID ", typeof(P).Name, typeof(T).Name);
+        sqlQuery += string.Format("INNER JOIN [{0}] ON [{1}].{0}ID = [{0}].ID ", typeof(T1).Name, typeof(T).Name);
+        sqlQuery += string.Format("INNER JOIN [{0}] ON [{1}].{0}ID = [{0}].ID ", typeof(T2).Name, typeof(T).Name);
 
         sqlQuery += "WHERE ";
 
@@ -508,30 +510,148 @@ public class AutoFactory<T>
             sqlQuery += " OR ";
         }
 
-        List<PropertyInfo> propertiesFromJoin = new List<PropertyInfo>(GetGenericType<Q>().GetType().GetProperties());
+        #region QEntity
+        List<PropertyInfo> propertiesFromJoin = new List<PropertyInfo>(GetGenericType<T1>().GetType().GetProperties());
 
         for (int i = 0; i < propertiesFromJoin.Count; i++)
         {
             PropertyInfo property = propertiesFromJoin[i];
             if (property.Name.ToLower().Contains("id") && i == 0) continue;
-            sqlQuery += string.Format("([{0}].{1} LIKE '%" + value + "%')", typeof(Q).Name, property.Name);
+            sqlQuery += string.Format("([{0}].{1} LIKE '%" + value + "%')", typeof(T1).Name, property.Name);
 
             sqlQuery += " OR ";
         }
+        #endregion
 
-        propertiesFromJoin = new List<PropertyInfo>(GetGenericType<P>().GetType().GetProperties());
+        #region PEntity
+        propertiesFromJoin = new List<PropertyInfo>(GetGenericType<T2>().GetType().GetProperties());
 
         for (int i = 0; i < propertiesFromJoin.Count; i++)
         {
             PropertyInfo property = propertiesFromJoin[i];
             if (property.Name.ToLower().Contains("id") && i == 0) continue;
-            sqlQuery += string.Format("([{0}].{1} LIKE '%" + value + "%')", typeof(P).Name, property.Name);
+            sqlQuery += string.Format("([{0}].{1} LIKE '%" + value + "%')", typeof(T2).Name, property.Name);
 
             if (i + 1 < propertiesFromJoin.Count)
             {
                 sqlQuery += " OR ";
             }
+        } 
+        #endregion
+
+        // We open a connection with the current connectionstring
+        SqlConnection connection = new SqlConnection(connectionString);
+        connection.Open();
+
+        // Generating the Sql Command to run on the database
+        SqlCommand cmd = new SqlCommand(sqlQuery, connection);
+
+        // Creating a Reader to contain the _response_ from the database
+        SqlDataReader reader = cmd.ExecuteReader();
+
+        // Creating a entity holder object to hold the response from the database
+        T entity = default(T);
+
+        // Creating a result list to hold the _responses_ from the database
+        List<T> result = new List<T>();
+
+        // Does the server got a respond for us?
+        if (reader.HasRows)
+        {
+            // As long as there is rows to read, do this
+            while (reader.Read())
+            {
+                // Creating the Entity object, it can now be used to set data
+                entity = GetGenericType();
+                // Loops through the properties of the current type
+                for (int i = 0; i < properties.Count; i++)
+                {
+                    // If the value from the database is Null, we continue
+                    if (reader[i] == DBNull.Value) continue;
+                    // Setting the property value as the value from the database
+                    properties[i].SetValue(entity, reader[i], null);
+                }
+                // Adding the entity to the List and continuing to the next field
+                result.Add(entity);
+            }
         }
+
+        // disposning and closing connection
+        cmd.Dispose();
+        connection.Dispose();
+        connection.Close();
+
+        // returning result
+        return result;
+    }
+
+    /// <summary>
+    /// Gets all elements from table that matches requirements.
+    /// </summary>
+    /// <typeparam name="T1">First to join</typeparam>
+    /// <typeparam name="T2">Second table to join</typeparam>
+    /// <typeparam name="T3">Third table to join</typeparam>
+    /// <param name="value">The search parameter</param>
+    /// <param name="fields">The fields in the table you wish to include</param>
+    /// <returns>List of elements from table that matches the value and fields</returns>
+    public List<T> SearchByJoin<T1, T2, T3>(object value, params string[] fields)
+    {
+        // Creating the SELECT SQL Statement, with {0} as Table name
+        string sqlQuery = string.Format("SELECT [{0}].* FROM [{0}] ", typeof(T).Name);
+        sqlQuery += string.Format("INNER JOIN [{0}] ON [{1}].{0}ID = [{0}].ID ", typeof(T1).Name, typeof(T).Name);
+        sqlQuery += string.Format("INNER JOIN [{0}] ON [{1}].{0}ID = [{0}].ID ", typeof(T2).Name, typeof(T).Name);
+        sqlQuery += string.Format("INNER JOIN [{0}] ON [{1}].{0}ID = [{0}].ID ", typeof(T3).Name, typeof(T).Name);
+
+        sqlQuery += "WHERE ";
+
+        // Adding fields to the SQL statement
+        for (int i = 0; i < fields.Length; i++)
+        {
+            sqlQuery += string.Format("([{2}].{0} LIKE '%{1}%')", fields[i], value, typeof(T).Name);
+            sqlQuery += " OR ";
+        }
+
+        #region QEntity
+        List<PropertyInfo> propertiesFromJoin = new List<PropertyInfo>(GetGenericType<T1>().GetType().GetProperties());
+
+        for (int i = 0; i < propertiesFromJoin.Count; i++)
+        {
+            PropertyInfo property = propertiesFromJoin[i];
+            if (property.Name.ToLower().Contains("id") && i == 0) continue;
+            sqlQuery += string.Format("([{0}].{1} LIKE '%" + value + "%')", typeof(T1).Name, property.Name);
+
+            sqlQuery += " OR ";
+        }
+        #endregion
+
+        #region PEntity
+        propertiesFromJoin = new List<PropertyInfo>(GetGenericType<T2>().GetType().GetProperties());
+
+        for (int i = 0; i < propertiesFromJoin.Count; i++)
+        {
+            PropertyInfo property = propertiesFromJoin[i];
+            if (property.Name.ToLower().Contains("id") && i == 0) continue;
+            sqlQuery += string.Format("([{0}].{1} LIKE '%" + value + "%')", typeof(T2).Name, property.Name);
+
+            sqlQuery += " OR ";
+        }
+        #endregion
+
+        #region OEntity
+        propertiesFromJoin = new List<PropertyInfo>(GetGenericType<T3>().GetType().GetProperties());
+
+        for (int i = 0; i < propertiesFromJoin.Count; i++)
+        {
+            PropertyInfo property = propertiesFromJoin[i];
+            if (property.Name.ToLower().Contains("id") && i == 0) continue;
+            sqlQuery += string.Format("([{0}].{1} LIKE '%" + value + "%')", typeof(T3).Name, property.Name);
+
+            if (i + 1 < propertiesFromJoin.Count)
+            {
+                sqlQuery += " OR ";
+            }
+        } 
+        #endregion
 
         // We open a connection with the current connectionstring
         SqlConnection connection = new SqlConnection(connectionString);
@@ -814,72 +934,72 @@ public class AutoFactory<T>
     /// <summary>
     /// Creates a VM between this Entity and select others.
     /// </summary>
-    /// <typeparam name="Q">Other Entity</typeparam>
+    /// <typeparam name="T1">Other Entity</typeparam>
     /// <param name="id">ID for this Entity</param>
-    /// <param name="qid">ID for QEntity</param>
+    /// <param name="t1ID">ID for QEntity</param>
     /// <returns>A dynamic object that contains a reference to this Entity and QEntity</returns>
-    public dynamic GetEntityVM<Q>(int id, int qid)
+    public dynamic GetEntityVM<T1>(int id, int t1ID)
     {
         dynamic vm = new ExpandoObject();
         ((IDictionary<string, object>)vm)[typeof(T).Name] = Get(id);
-        ((IDictionary<string, object>)vm)[typeof(Q).Name] = new AutoFactory<Q>().Get(qid);
+        ((IDictionary<string, object>)vm)[typeof(T1).Name] = new AutoFactory<T1>().Get(t1ID);
         return vm;
     }
 
     /// <summary>
     /// Creates a VM between this Entity and select others.
     /// </summary>
-    /// <typeparam name="Q">Other Entity</typeparam>
+    /// <typeparam name="T1">Other Entity</typeparam>
     /// <param name="id">ID for this Entity</param>
-    /// <param name="qid">ID for QEntity</param>
-    /// <param name="pid">ID for PEntity</param>
+    /// <param name="t1ID">ID for QEntity</param>
+    /// <param name="t2ID">ID for PEntity</param>
     /// <returns>A dynamic object that contains a reference to this Entity, QEntity and PEntity</returns>
-    public dynamic GetEntityVM<Q, P>(int id, int qid, int pid)
+    public dynamic GetEntityVM<T1, T2>(int id, int t1ID, int t2ID)
     {
         dynamic vm = new ExpandoObject();
         ((IDictionary<string, object>)vm)[typeof(T).Name] = Get(id);
-        ((IDictionary<string, object>)vm)[typeof(Q).Name] = new AutoFactory<Q>().Get(qid);
-        ((IDictionary<string, object>)vm)[typeof(P).Name] = new AutoFactory<P>().Get(pid);
+        ((IDictionary<string, object>)vm)[typeof(T1).Name] = new AutoFactory<T1>().Get(t1ID);
+        ((IDictionary<string, object>)vm)[typeof(T2).Name] = new AutoFactory<T2>().Get(t2ID);
         return vm;
     }
 
     /// <summary>
     /// Creates a VM between this Entity and select others.
     /// </summary>
-    /// <typeparam name="Q">Other Entity</typeparam>
+    /// <typeparam name="T1">Other Entity</typeparam>
     /// <param name="id">ID for this Entity</param>
-    /// <param name="qid">ID for QEntity</param>
-    /// <param name="pid">ID for PEntity</param>
-    /// <param name="oid">ID for OEntity</param>
+    /// <param name="t1ID">ID for QEntity</param>
+    /// <param name="t2ID">ID for PEntity</param>
+    /// <param name="t3ID">ID for OEntity</param>
     /// <returns>A dynamic object that contains a reference to this Entity, QEntity, PEntity and OEntity</returns>
-    public dynamic GetEntityVM<Q, P, O>(int id, int qid, int pid, int oid)
+    public dynamic GetEntityVM<T1, T2, T3>(int id, int t1ID, int t2ID, int t3ID)
     {
         dynamic vm = new ExpandoObject();
         ((IDictionary<string, object>)vm)[typeof(T).Name] = Get(id);
-        ((IDictionary<string, object>)vm)[typeof(Q).Name] = new AutoFactory<Q>().Get(qid);
-        ((IDictionary<string, object>)vm)[typeof(P).Name] = new AutoFactory<P>().Get(pid);
-        ((IDictionary<string, object>)vm)[typeof(O).Name] = new AutoFactory<O>().Get(oid);
+        ((IDictionary<string, object>)vm)[typeof(T1).Name] = new AutoFactory<T1>().Get(t1ID);
+        ((IDictionary<string, object>)vm)[typeof(T2).Name] = new AutoFactory<T2>().Get(t2ID);
+        ((IDictionary<string, object>)vm)[typeof(T3).Name] = new AutoFactory<T3>().Get(t3ID);
         return vm;
     }
 
     /// <summary>
     /// Creates a VM between this Entity and select others.
     /// </summary>
-    /// <typeparam name="Q">Other Entity</typeparam>
+    /// <typeparam name="T1">Other Entity</typeparam>
     /// <param name="id">ID for this Entity</param>
-    /// <param name="qid">ID for QEntity</param>
-    /// <param name="pid">ID for PEntity</param>
-    /// <param name="oid">ID for OEntity</param>
-    /// <param name="uid">ID for UEntity</param>
+    /// <param name="t1ID">ID for QEntity</param>
+    /// <param name="t2ID">ID for PEntity</param>
+    /// <param name="t3ID">ID for OEntity</param>
+    /// <param name="t4ID">ID for UEntity</param>
     /// <returns>A dynamic object that contains a reference to this Entity, QEntity, PEntity, OEntity and UEntity</returns>
-    public dynamic GetEntityVM<Q, P, O, U>(int id, int qid, int pid, int oid, int uid)
+    public dynamic GetEntityVM<T1, T2, T3, T4>(int id, int t1ID, int t2ID, int t3ID, int t4ID)
     {
         dynamic vm = new ExpandoObject();
         ((IDictionary<string, object>)vm)[typeof(T).Name] = Get(id);
-        ((IDictionary<string, object>)vm)[typeof(Q).Name] = new AutoFactory<Q>().Get(qid);
-        ((IDictionary<string, object>)vm)[typeof(P).Name] = new AutoFactory<P>().Get(pid);
-        ((IDictionary<string, object>)vm)[typeof(O).Name] = new AutoFactory<O>().Get(oid);
-        ((IDictionary<string, object>)vm)[typeof(U).Name] = new AutoFactory<U>().Get(uid);
+        ((IDictionary<string, object>)vm)[typeof(T1).Name] = new AutoFactory<T1>().Get(t1ID);
+        ((IDictionary<string, object>)vm)[typeof(T2).Name] = new AutoFactory<T2>().Get(t2ID);
+        ((IDictionary<string, object>)vm)[typeof(T3).Name] = new AutoFactory<T3>().Get(t3ID);
+        ((IDictionary<string, object>)vm)[typeof(T4).Name] = new AutoFactory<T4>().Get(t4ID);
         return vm;
     }
 }

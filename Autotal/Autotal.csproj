@@ -105,8 +105,12 @@
     <Content Include="Areas\Admin\Views\web.config" />
     <Content Include="Areas\Admin\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Admin\Views\Shared\_Layout.cshtml" />
-    <Content Include="Areas\Admin\Views\CMS\Index.cshtml" />
     <Content Include="Areas\Admin\Views\CMS\Products.cshtml" />
+    <Content Include="Areas\Admin\Views\CMS\Images.cshtml" />
+    <Content Include="Areas\Admin\Views\CMS\Colors.cshtml" />
+    <Content Include="Areas\Admin\Views\CMS\EditColor.cshtml" />
+    <Content Include="Areas\Admin\Views\CMS\Brands.cshtml" />
+    <Content Include="Areas\Admin\Views\CMS\EditBrand.cshtml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -125,6 +129,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\Upload.cs" />
     <Compile Include="Models\Brand.cs" />
     <Compile Include="Models\BrandVM.cs" />
     <Compile Include="Models\Color.cs" />
@@ -154,7 +159,6 @@
     <Content Include="Views\Home\SortCars.cshtml" />
     <Content Include="Views\Home\ShowProduct.cshtml" />
     <Content Include="Views\Home\Footer.cshtml" />
-    <Content Include="Views\Home\Test.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

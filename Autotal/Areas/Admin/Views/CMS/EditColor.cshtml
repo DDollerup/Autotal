@@ -1,0 +1,24 @@
+﻿
+@{
+    ViewBag.Title = "Edit Color";
+    bool addColor = ViewBag.AddColor;
+}
+
+<h2>Edit Color</h2>
+
+
+<form action="/Admin/CMS/EditColorSubmit" method="post">
+    <div class="row">
+        @(addColor == true ? "" : Html.Raw("<input type='hidden' value='" + Model.ID + "' name='ID' />"))
+        <div class="col-md-3">
+            <span>Name</span><input type="text" name="Name" required value="@(addColor == true ? "" : Model.Name)" />
+        </div>
+        <div class="col-md-9">
+            <span>Color Code</span><input type="text" name="ColorCode" required value="@(addColor == true ? "" : Model.ColorCode)" />
+        </div>
+        <br />
+        <div class="col-md-12">
+            <input type="submit" value="@(addColor == true ? "Add Color" : "Edit Color")" />
+        </div>
+    </div>
+</form>

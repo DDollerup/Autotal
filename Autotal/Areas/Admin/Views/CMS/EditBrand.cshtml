@@ -1,0 +1,20 @@
+﻿
+@{
+    ViewBag.Title = "EditBrand";
+    bool addBrand = ViewBag.AddBrand;
+}
+
+<h2>Edit Brand</h2>
+
+<form action="/Admin/CMS/EditBrandSubmit" method="post">
+    <div class="row">
+        @(addBrand == true ? "" : Html.Raw("<input type='hidden' value='" + Model.ID + "' name='ID' />"))
+        <div class="col-md-12">
+            <span>Name</span><input type="text" name="Name" required value="@(addBrand == true ? "" : Model.Name)" />
+        </div>
+        <br />
+        <div class="col-md-12">
+            <input type="submit" value="@(addBrand == true ? "Add Brand" : "Edit Brand")" />
+        </div>
+    </div>
+</form>

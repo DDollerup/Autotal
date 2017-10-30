@@ -1,0 +1,34 @@
+﻿@model List<Brand>
+@{
+    ViewBag.Title = "Brands";
+}
+
+<h2>Brands</h2>
+
+<div class="row">
+    <div class="col-xs-9">
+        <strong>Brand Name</strong>
+    </div>
+    <div class="col-xs-3">
+        <strong>Actions</strong>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <a href="/Admin/CMS/EditBrand"><strong>Add Brand</strong></a>
+    </div>
+</div>
+@foreach (Brand brand in Model)
+{
+    <div class="row">
+        <div class="col-xs-10">
+            <strong>@brand.Name</strong>
+        </div>
+        <div class="col-xs-1">
+            <a href="/Admin/CMS/EditBrand/@brand.ID"><i class="glyphicon glyphicon-edit"></i></a>
+        </div>
+        <div class="col-xs-1">
+            <a href="/Admin/CMS/DeleteBrand/@brand.ID" onclick="return confirm('Er du sikker på at du vil slette dette element?')"><i class="glyphicon glyphicon-trash"></i></a>
+        </div>
+    </div>
+}

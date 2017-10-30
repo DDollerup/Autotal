@@ -10,7 +10,7 @@ namespace Autotal.Areas.Admin.Controllers
 {
     public class CMSController : Controller
     {
-        DBContext context = new DBContext();
+        public DBContext context = new DBContext();
 
         public ActionResult Index()
         {
@@ -19,8 +19,125 @@ namespace Autotal.Areas.Admin.Controllers
 
         public ActionResult Products()
         {
-            return View(CreateListProductVM(context.ProductFactory.GetAll()));
+            List<ProductVM> products = CreateListProductVM(context.ProductFactory.GetAll());
+            return View(products);
         }
+
+        public ActionResult Images()
+        {
+            return View(context.ImageFactory.GetAll());
+        }
+
+        [HttpPost]
+        public ActionResult CreateImages(List<HttpPostedFileBase> list)
+        {
+            foreach (HttpPostedFileBase file in list)
+            {
+                string fileName = "";
+                if (Upload.Image(file, Request.PhysicalApplicationPath + @"/Content/Images/Products/", out fileName))
+                {
+                    Upload.Image(file, Request.PhysicalApplicationPath + @"/Content/Images/Products/", "tn_" + fileName, 400);
+
+                    Image image = new Image();
+                    image.ImageURL = fileName;
+                    image.ProductID = 0;
+                    image.SubpageID = 0;
+                    image.Alt = "";
+
+                    context.ImageFactory.Insert(image);
+                }
+            }
+
+            TempData["MSG"] = "Images has been uploaded";
+            return RedirectToAction("Images");
+        }
+
+        #region CMS Color
+        public ActionResult Colors()
+        {
+            return View(context.ColorFactory.GetAll());
+        }
+
+        public ActionResult EditColor(int id = 0)
+        {
+            ViewBag.AddColor = (id == 0);
+
+            if (id == 0)
+            {
+                return View();
+            }
+            else
+            {
+                return View(context.ColorFactory.Get(id));
+            }
+        }
+
+        [HttpPost]
+        public ActionResult EditColorSubmit(Color color)
+        {
+            if (color.ID > 0)
+            {
+                context.ColorFactory.Update(color);
+
+                TempData["MSG"] = "Color hass been updated.";
+            }
+            else
+            {
+                context.ColorFactory.Insert(color);
+
+                TempData["MSG"] = "Color hass been added.";
+            }
+
+            return RedirectToAction("Colors");
+        }
+
+        public ActionResult DeleteColor(int id)
+        {
+            context.ColorFactory.Delete(id);
+            return RedirectToAction("Colors");
+        }
+        #endregion
+
+        #region CMS Brand
+        public ActionResult Brands()
+        {
+            return View(context.BrandFactory.GetAll());
+        }
+
+        public ActionResult EditBrand(int id = 0)
+        {
+            ViewBag.AddBrand = (id == 0);
+            if (id == 0)
+            {
+                return View();
+            }
+            else
+            {
+                return View(context.BrandFactory.Get(id));
+            }
+        }
+
+        [HttpPost]
+        public ActionResult EditBrandSubmit(Brand brand)
+        {
+            if (brand.ID > 0)
+            {
+                context.BrandFactory.Update(brand);
+            }
+            else
+            {
+                context.BrandFactory.Insert(brand);
+            }
+            return RedirectToAction("Brands");
+        }
+
+        public ActionResult DeleteBrand(int id)
+        {
+            context.BrandFactory.Delete(id);
+            TempData["MSG"] = "Brand has been deleted.";
+            return RedirectToAction("Brands");
+        } 
+        #endregion
 
         public List<ProductVM> CreateListProductVM(List<Product> productsToCreateFrom)
         {
@@ -43,6 +160,7 @@ namespace Autotal.Areas.Admin.Controllers
 
             return allProductsWithImages;
         }
+
         public ProductVM CreateProductVM(Product productToCreateFrom)
         {
             ProductVM pvm = new ProductVM();

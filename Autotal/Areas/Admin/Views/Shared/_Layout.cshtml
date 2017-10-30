@@ -17,19 +17,22 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                @Html.ActionLink("Autotal CMS", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+                @Html.ActionLink("Application name", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>
-                        <a href="/Admin/CMS/Products">Products</a>
-                    </li>
                 </ul>
             </div>
         </div>
     </div>
 
     <div class="container body-content">
+        @if (TempData["MSG"] != null)
+        {
+            <p>
+                @TempData["MSG"]
+            </p>
+        }
         @RenderBody()
         <hr />
         <footer>

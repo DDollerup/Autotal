@@ -87,12 +87,6 @@ namespace Autotal.Controllers
             return pvm;
         }
 
-        public ActionResult Test()
-        {
-            Product p = context.ProductFactory.Get(1);
-            return View(context.ProductFactory.GetEntityVM<Brand>(p.ID, p.BrandID));
-        }
-
 
         #region Sort Products
         public ActionResult SortProductBy()

@@ -1,0 +1,42 @@
+﻿@model List<Color>
+@{
+    ViewBag.Title = "Colors";
+}
+
+<h2>Colors</h2>
+
+<div class="row">
+    <div class="col-xs-3">
+        <strong>Color</strong>
+    </div>
+    <div class="col-xs-6">
+        <strong>Color Name</strong>
+    </div>
+    <div class="col-xs-3">
+        <strong>Actions</strong>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12">
+        <a href="/Admin/CMS/EditColor"><strong>Add Color</strong></a>
+    </div>
+</div>
+@foreach (Color color in Model)
+{
+    <div class="row">
+        <div class="col-xs-1">
+            <div class="img-responsive" style="min-width:100px; min-height:100px; background-color:@(color.ColorCode);">
+
+            </div>
+        </div>
+        <div class="col-xs-9">
+            <strong>@color.Name</strong>
+        </div>
+        <div class="col-xs-1">
+            <a href="/Admin/CMS/EditColor/@color.ID"><i class="glyphicon glyphicon-edit"></i></a>
+        </div>
+        <div class="col-xs-1">
+            <a href="/Admin/CMS/DeleteColor/@color.ID" onclick="return confirm('Er du sikker på at du vil slette dette element?')"><i class="glyphicon glyphicon-trash"></i></a>
+        </div>
+    </div>
+}
