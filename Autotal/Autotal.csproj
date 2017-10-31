@@ -111,6 +111,7 @@
     <Content Include="Areas\Admin\Views\CMS\EditColor.cshtml" />
     <Content Include="Areas\Admin\Views\CMS\Brands.cshtml" />
     <Content Include="Areas\Admin\Views\CMS\EditBrand.cshtml" />
+    <Content Include="Areas\Admin\Views\CMS\EditProduct.cshtml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -159,6 +160,7 @@
     <Content Include="Views\Home\SortCars.cshtml" />
     <Content Include="Views\Home\ShowProduct.cshtml" />
     <Content Include="Views\Home\Footer.cshtml" />
+    <Content Include="Views\User\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -169,7 +171,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Areas\Admin\Models\" />
-    <Folder Include="Views\User\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

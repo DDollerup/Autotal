@@ -1,0 +1,148 @@
+﻿@model ProductVM
+@{
+    ViewBag.Title = "EditProduct";
+}
+
+<h2>Product</h2>
+
+<form action="/Admin/CMS/EditProductSubmit" method="post" enctype="multipart/form-data">
+    @(Model.Product.ID > 0 ? Html.Raw("<input type='hidden' name='ID' value='" + Model.Product.ID + "' />") : Html.Raw(""))
+    <div class="row">
+        <div class="col-md-6">
+            <h4>
+                Informationer
+            </h4>
+            <div class="row">
+                <!-- Brand -->
+                <div class="col-md-6">
+                    <select name="BrandID" required>
+                        <option value="">Vælg Brand</option>
+                        <!-- For hver Brand i vores table Brand i Databasen -->
+                        <!-- Som vi henter i Controlleren og gemmer i ViewBag.Brands -->
+                        <!-- Laver vi en løkke som skal udskrive en DropDownList med alle brands i -->
+                        @foreach (Brand brand in ViewBag.Brands)
+                        {
+                            // Vi skal huske at sørge for at have det brand valgt, som produktet har i forvejen
+                            // f.eks. Hvis vores produkt er en ford, skal have valgt det brand, som har det matchende
+                            // BrandID
+                            if (Model.Brand.ID == brand.ID)
+                            {
+                                <option value="@brand.ID" selected>@brand.Name</option>
+                            }
+                            // Men hvis BrandID'et ikke matcher, skal vi udskrive en option alligevel, den skal bare ikke være valgt.
+                            else
+                            {
+                                <option value="@brand.ID">@brand.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <!-- Color -->
+                <div class="col-md-6">
+                    <select name="ColorID" required>
+                        <option value="">Vælg Farve</option>
+                        <!-- For hver Brand i vores table Brand i Databasen -->
+                        <!-- Som vi henter i Controlleren og gemmer i ViewBag.Brands -->
+                        <!-- Laver vi en løkke som skal udskrive en DropDownList med alle brands i -->
+                        @foreach (Color color in ViewBag.Colors)
+                        {
+                            // Vi skal huske at sørge for at have det brand valgt, som produktet har i forvejen
+                            // f.eks. Hvis vores produkt er en ford, skal have valgt det brand, som har det matchende
+                            // BrandID
+                            if (Model.Color.ID == color.ID)
+                            {
+                                <option value="@color.ID" selected>@color.Name</option>
+                            }
+                            // Men hvis BrandID'et ikke matcher, skal vi udskrive en option alligevel, den skal bare ikke være valgt.
+                            else
+                            {
+                                <option value="@color.ID">@color.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    Model
+                </div>
+                <div class="col-md-10">
+                    <input type="text" name="Model" required value="@(Model.Product.ID > 0 ? Model.Product.Model : "")" />
+                </div>
+                <div class="col-md-2">
+                    HK
+                </div>
+                <div class="col-md-10">
+                    <input type="number" name="BHP" required value="@(Model.Product.ID > 0 ? Model.Product.BHP.ToString() : "")" />
+                </div>
+                <div class="col-md-2">
+                    Årgang
+                </div>
+                <div class="col-md-10">
+                    <input type="number" name="Year" required value="@(Model.Product.ID > 0 ? Model.Product.Year.ToString() : "")" />
+                </div>
+                <div class="col-md-2">
+                    Km
+                </div>
+                <div class="col-md-10">
+                    <input type="number" name="Km" required value="@(Model.Product.ID > 0 ? Model.Product.Km.ToString() : "")" />
+                </div>
+                <div class="col-md-2">
+                    Pris
+                </div>
+                <div class="col-md-10">
+                    <input type="number" step="0.01" name="Price" required value="@(Model.Product.ID > 0 ? Model.Product.BHP.ToString() : "")" />
+                </div>
+                <div class="col-md-2">
+                    Ryger
+                </div>
+                <div class="col-md-10">
+                    Ja<input type="radio" name="Smoker" value="true" @(Model.Product.Smoker == true ? "checked" : "") />
+                    Nej<input type="radio" name="Smoker" value="false" @(Model.Product.Smoker == false ? "checked" : "") />
+                </div>
+                <div class="col-md-2">
+                    Synet
+                </div>
+                <div class="col-md-10">
+                    Ja<input type="radio" name="Inspected" value="true" @(Model.Product.Inspected == true ? "checked" : "") />
+                    Nej<input type="radio" name="Inspected" value="false" @(Model.Product.Inspected == false ? "checked" : "") />
+                </div>
+                <div class="col-md-2">
+                    Beskrivelse
+                </div>
+                <div class="col-md-10">
+                    <textarea name="Description" required>@(Model.Product.ID > 0 ? Model.Product.Description : "")</textarea>
+                </div>
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <div class="col-md-12">
+                    <input type="submit" value="@(Model.Product.ID > 0 ? "Ændre Produkt" : "Tilføj Produkt")" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h4>
+                Billeder
+            </h4>
+            <div class="row">
+                @foreach (Image image in Model.Images)
+                {
+                    <div class="col-md-4">
+                        <img src="~/Content/Images/Products/@image.ImageURL" alt="@image.Alt" class="img-responsive" />
+                        <input type="checkbox" name="imageIDs" value="@image.ID"  @(image.ProductID == 0 ? "" : "checked") />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</form>
+

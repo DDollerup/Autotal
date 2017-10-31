@@ -23,6 +23,71 @@ namespace Autotal.Areas.Admin.Controllers
             return View(products);
         }
 
+        public ActionResult EditProduct(int id = 0)
+        {
+            ProductVM productVM = null;
+
+            ViewBag.Brands = context.BrandFactory.GetAll();
+            ViewBag.Colors = context.ColorFactory.GetAll();
+
+            if (id == 0)
+            {
+                productVM = new ProductVM();
+                productVM.Brand = new Brand();
+                productVM.Color = new Color();
+                productVM.Images = new List<Image>();
+                productVM.Product = new Product();
+                productVM.Images = context.ImageFactory.GetAllBy("ProductID", 0);
+                return View(productVM);
+            }
+            else
+            {
+                productVM = CreateProductVM(context.ProductFactory.Get(id));
+                productVM.Images.AddRange(context.ImageFactory.GetAllBy("ProductID", 0));
+                return View(productVM);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult EditProductSubmit(Product product, List<int> imageIDs)
+        {
+            if (product.ID > 0)
+            {
+                context.ProductFactory.Update(product);
+                for (int i = 0; i < imageIDs.Count; i++)
+                {
+                    Image img = context.ImageFactory.Get(imageIDs[i]);
+                    img.ProductID = product.ID;
+                    context.ImageFactory.Update(img);
+                }
+
+                foreach (Image img in context.ImageFactory.GetAllBy("ProductID", product.ID))
+                {
+                    if (imageIDs.Contains(img.ID))
+                    {
+                        continue;
+                    }
+                    img.ProductID = 0;
+                    context.ImageFactory.Update(img);
+                }
+                TempData["MSG"] = "The Product has been Edited";
+            }
+            else
+            {
+                context.ProductFactory.Insert(product);
+                for (int i = 0; i < imageIDs.Count; i++)
+                {
+                    Image img = context.ImageFactory.Get(imageIDs[i]);
+                    img.ProductID = context.ProductFactory.GetLatest().ID;
+                    context.ImageFactory.Update(img);
+                }
+
+                TempData["MSG"] = "The Product has been Added";
+            }
+
+            return RedirectToAction("Products");
+        }
+
         public ActionResult Images()
         {
             return View(context.ImageFactory.GetAll());

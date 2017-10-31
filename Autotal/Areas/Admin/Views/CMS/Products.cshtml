@@ -18,7 +18,7 @@
 </div>
 <div class="row">
     <div class="col-xs-12">
-        <a href="/Admin/CMS/CreateProduct"><strong>Add Product</strong></a>
+        <a href="/Admin/CMS/EditProduct"><strong>Add Product</strong></a>
     </div>
 </div>
 @foreach (ProductVM pvm in Model)
@@ -34,7 +34,7 @@
             <a href="/Home/ShowProduct/@pvm.Product.ID" target="_blank"><i class="glyphicon glyphicon-eye-open"></i></a>
         </div>
         <div class="col-xs-1">
-            <a href="#"><i class="glyphicon glyphicon-edit"></i></a>
+            <a href="/Admin/CMS/EditProduct/@pvm.Product.ID"><i class="glyphicon glyphicon-edit"></i></a>
         </div>
         <div class="col-xs-1">
             <a href="#"><i class="glyphicon glyphicon-trash"></i></a>
