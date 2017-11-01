@@ -5,12 +5,54 @@ using System.Web;
 using System.Web.Mvc;
 using Autotal.Models;
 using Autotal.Factories;
+using System.Web.Security;
 
 namespace Autotal.Areas.Admin.Controllers
 {
+
+    [Authorize]
     public class CMSController : Controller
     {
         public DBContext context = new DBContext();
+
+        #region Login
+        [AllowAnonymous]
+        public ActionResult Login(string returnurl)
+        {
+            TempData["ReturnURL"] = returnurl;
+            return View();
+        }
+
+        [AllowAnonymous, ValidateAntiForgeryToken, HttpPost]
+        public ActionResult LoginSubmit(string email, string password, string rememberMe)
+        {
+            CMSUser user = context.CMSUserFactory.Login(email, password);
+            if (user != null)
+            {
+                FormsAuthentication.SetAuthCookie(email, Convert.ToBoolean(rememberMe));
+                Session["CMSUser"] = user;
+                string returnurl = TempData["ReturnURL"]?.ToString();
+                if (returnurl == null)
+                {
+                    returnurl = "/Admin/CMS/Index";
+                }
+
+                return Redirect(returnurl);
+            }
+            else
+            {
+                TempData["LoginError"] = "Wrong email or password";
+                return RedirectToAction("Login");
+            }
+        }
+
+        public ActionResult Logout()
+        {
+            FormsAuthentication.SignOut();
+            Session.Remove("CMSUser");
+            return RedirectToAction("Login");
+        }
+        #endregion
 
         public ActionResult Index()
         {
@@ -201,7 +243,50 @@ namespace Autotal.Areas.Admin.Controllers
             context.BrandFactory.Delete(id);
             TempData["MSG"] = "Brand has been deleted.";
             return RedirectToAction("Brands");
-        } 
+        }
+        #endregion
+
+        #region Subpage
+
+        public ActionResult Subpages()
+        {
+            return View(context.SubpageFactory.GetAll());
+        }
+
+        public ActionResult EditSubpage(int id = 0)
+        {
+            if (id > 0)
+            {
+                return View(context.SubpageFactory.Get(id));
+            }
+            else
+            {
+                Subpage subpage = new Subpage();
+                subpage.ID = 0;
+                subpage.Title = "";
+                subpage.Content = "";
+                return View(subpage);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult EditSubpageSubmit(Subpage subpage)
+        {
+            if (subpage.ID > 0)
+            {
+                context.SubpageFactory.Update(subpage);
+
+                TempData["MSG"] = "Subpage has been updated";
+            }
+            else
+            {
+                context.SubpageFactory.Insert(subpage);
+                TempData["MSG"] = "Subpage has been added";
+            }
+
+            return RedirectToAction("Subpages");
+        }
+
         #endregion
 
         public List<ProductVM> CreateListProductVM(List<Product> productsToCreateFrom)

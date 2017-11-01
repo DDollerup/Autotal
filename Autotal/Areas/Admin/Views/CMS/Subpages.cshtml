@@ -1,0 +1,34 @@
+﻿@model List<Subpage>
+@{
+    ViewBag.Title = "Subpages";
+}
+
+<h2>Subpages</h2>
+
+<table class="table table-striped table-responsive">
+    <tr>
+        <th>
+            Title
+        </th>
+        <th>
+            Actions
+        </th>    
+    </tr>
+    <tr>
+        <td colspan="2">
+            <a href="/Admin/CMS/EditSubpage">Tilføj Underside</a>
+        </td>
+    </tr>
+    @foreach (Subpage subpage in Model)
+    {
+        <tr>
+            <td>
+                @subpage.Title
+            </td>
+            <td>
+                <a href="/Admin/CMS/EditSubpage/@subpage.ID"><i class="glyphicon glyphicon-edit"></i></a>
+                <a href="#"><i class="glyphicon glyphicon-trash"></i></a>
+            </td>
+        </tr>
+    }
+</table>

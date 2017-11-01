@@ -112,6 +112,10 @@
     <Content Include="Areas\Admin\Views\CMS\Brands.cshtml" />
     <Content Include="Areas\Admin\Views\CMS\EditBrand.cshtml" />
     <Content Include="Areas\Admin\Views\CMS\EditProduct.cshtml" />
+    <Content Include="Areas\Admin\Views\CMS\EditSubpage.cshtml" />
+    <Content Include="Areas\Admin\Views\CMS\Subpages.cshtml" />
+    <Content Include="Areas\Admin\Views\CMS\Index.cshtml" />
+    <Content Include="Areas\Admin\Views\CMS\Login.cshtml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -125,6 +129,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Factories\AutoFactory.cs" />
+    <Compile Include="Factories\CMSUserFactory.cs" />
     <Compile Include="Factories\ContactFactory.cs" />
     <Compile Include="Factories\DBContext.cs" />
     <Compile Include="Global.asax.cs">
@@ -133,6 +138,7 @@
     <Compile Include="Helpers\Upload.cs" />
     <Compile Include="Models\Brand.cs" />
     <Compile Include="Models\BrandVM.cs" />
+    <Compile Include="Models\CMSUser.cs" />
     <Compile Include="Models\Color.cs" />
     <Compile Include="Models\Contact.cs" />
     <Compile Include="Models\Image.cs" />

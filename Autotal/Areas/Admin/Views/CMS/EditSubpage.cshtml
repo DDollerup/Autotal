@@ -1,0 +1,38 @@
+﻿@model Subpage
+@{
+    ViewBag.Title = "EditSubpage";
+}
+
+<h2>Subpage</h2>
+
+<form action="/Admin/CMS/EditSubpageSubmit" method="post" enctype="multipart/form-data">
+    <table class="table table-striped table-responsive">
+        @(Model.ID > 0 ? Html.Raw("<input type='hidden' name='ID' value='" + Model.ID + "'>") : Html.Raw(""))
+        <tr>
+            <td>
+                Title
+            </td>
+            <td>
+                <input name="Title" type="text" required value="@(Model.ID > 0 ? Model.Title : "")" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Content
+            </td>
+            <td>
+                <textarea name="Content">@(Model.ID > 0 ? Model.Content : "")</textarea>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <input type="submit" value="@(Model.ID > 0? "Edit Subpage" : "Add Subpage")" />
+            </td>
+        </tr>
+    </table>
+</form>
+
+@section JS {
+    <script src="https://cloud.tinymce.com/stable/tinymce.min.js"></script>
+    <script>tinymce.init({ selector: 'textarea' });</script>
+}

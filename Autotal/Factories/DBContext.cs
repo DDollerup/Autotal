@@ -14,6 +14,7 @@ namespace Autotal.Factories
         private AutoFactory<Product> productFactory;
         private AutoFactory<Subpage> subpageFactory;
         private ContactFactory contactFactory;
+        private CMSUserFactory cmsUserFactory;
 
         public AutoFactory<Brand> BrandFactory
         {
@@ -79,6 +80,17 @@ namespace Autotal.Factories
                     contactFactory = new ContactFactory();
                 }
                 return contactFactory;
+            }
+        }
+        public CMSUserFactory CMSUserFactory
+        {
+            get
+            {
+                if (cmsUserFactory == null)
+                {
+                    cmsUserFactory = new CMSUserFactory();
+                }
+                return cmsUserFactory;
             }
         }
     }

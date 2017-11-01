@@ -1,0 +1,57 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+}
+
+<h2>Login</h2>
+
+<div class="row">
+    <br />
+    <br />
+    <br />
+    <div class="col-md-4">
+    </div>
+    <div class="col-md-4">
+        <div style="border:1px solid #808080">
+            <form action="/Admin/CMS/LoginSubmit" method="post" class="form-group">
+                @Html.AntiForgeryToken()
+                <div class="row">
+                    <div class="row">
+                        <div class="col-md-12 form-group">
+                            <h5>Login</h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            Username
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <input type="text" class="form-control" name="email" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 form-group">
+                            Password
+                        </div>
+                        <div class="col-md-6 form-group">
+                            <input type="password" class="form-control" name="password" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 form-group">
+                            <span>Remember me?</span><input type="checkbox" class="form-control" name="rememberMe" value="true" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input type="submit" value="Login" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <br />
+        </div>
+    </div>
+    <div class="col-md-4">
+    </div>
+</div>
