@@ -17,6 +17,8 @@ namespace Autotal.Controllers
             ViewBag.RandomPictures = context.ImageFactory.TakeRandom(3);
             context.ProductFactory.CountBy("BrandID", 1);
 
+            bool test= context.ProductFactory.CreateTable();
+
             return View(context.SubpageFactory.Get(1));
         }
 

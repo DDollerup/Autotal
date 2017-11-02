@@ -437,7 +437,7 @@ public class AutoFactory<T>
             {
                 sqlQuery += " OR ";
             }
-        } 
+        }
         #endregion
 
         // We open a connection with the current connectionstring
@@ -536,7 +536,7 @@ public class AutoFactory<T>
             {
                 sqlQuery += " OR ";
             }
-        } 
+        }
         #endregion
 
         // We open a connection with the current connectionstring
@@ -650,7 +650,7 @@ public class AutoFactory<T>
             {
                 sqlQuery += " OR ";
             }
-        } 
+        }
         #endregion
 
         // We open a connection with the current connectionstring
@@ -1001,5 +1001,80 @@ public class AutoFactory<T>
         ((IDictionary<string, object>)vm)[typeof(T3).Name] = new AutoFactory<T3>().Get(t3ID);
         ((IDictionary<string, object>)vm)[typeof(T4).Name] = new AutoFactory<T4>().Get(t4ID);
         return vm;
+    }
+
+
+    /* >>>>> Create Tables <<<<< */
+
+    private bool TableExists(string table)
+    {
+        // We open a connection with the current connectionstring
+        SqlConnection connection = new SqlConnection(connectionString);
+        connection.Open();
+
+        // Creating the query
+        string sqlQuery = string.Format("IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '" + table + "')" +
+                                        "SELECT 'true'" +
+                                        "ELSE " +
+                                        "SELECT 'false'");
+
+        // Generating the Sql Command to run on the database
+        SqlCommand cmd = new SqlCommand(sqlQuery, connection);
+
+        bool result = Convert.ToBoolean(cmd.ExecuteScalar());
+
+        // Disposing and closing connection
+        cmd.Dispose();
+        connection.Dispose();
+        connection.Close();
+
+        // returning result
+        return result;
+    }
+
+    private string GetColumnType(PropertyInfo property)
+    {
+        switch (property.PropertyType.Name)
+        {
+            case "Int32":
+                return " INT";
+            case "String":
+                return " NVARCHAR(MAX)";
+            case "Boolean":
+                return " BIT";
+            case "Double":
+                return " FLOAT";
+            default:
+                return "";
+        }
+    }
+
+    public bool CreateTable()
+    {
+        // We open a connection with the current connectionstring
+        SqlConnection connection = new SqlConnection(connectionString);
+        connection.Open();
+
+        // Creating the query
+        string sqlQuery = string.Format("CREATE TABLE [{0}] (", typeof(T).Name);
+        for (int i = 0; i < properties.Count; i++)
+        {
+            sqlQuery += properties[i].Name + GetColumnType(properties[i]);
+            sqlQuery += (i + 1 == properties.Count ? "" : ", ");
+        }
+        sqlQuery += ")";
+
+        // Generating the Sql Command to run on the database
+        SqlCommand cmd = new SqlCommand(sqlQuery, connection);
+
+        bool result = Convert.ToBoolean(cmd.ExecuteScalar());
+
+        // Disposing and closing connection
+        cmd.Dispose();
+        connection.Dispose();
+        connection.Close();
+
+        // returning result
+        return result;
     }
 }
